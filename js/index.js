@@ -10,13 +10,19 @@ import App from './app';
 import '../less/index.less';
 import 'font-awesome-webpack';
 
-let rutetider = immstruct({"navn":"Asbj. Øverås v.","lat":"10.4245","lon":"63.39527","avganger":[]});
+//let rutetider = immstruct({"navn":"Asbj. Øverås v.","lat":"10.4245","lon":"63.39527","avganger":[]});
+let rutetider = immstruct({"navn":"Asbj. Øverås v.","lat":"10.4245","lon":"63.39527","avganger":[{"l":"8","t":"23.11.2015 21:43","ts":"23.11.2015 21:43","rt":1,"d":"Stavset"},{"l":"8","t":"23.11.2015 22:12","ts":"23.11.2015 22:13","rt":1,"d":"Stavset"},{"l":"8","t":"23.11.2015 22:43","ts":"23.11.2015 22:43","rt":0,"d":"Stavset"},{"l":"8","t":"23.11.2015 23:13","ts":"23.11.2015 23:13","rt":0,"d":"Stavset"},{"l":"8","t":"23.11.2015 23:43","ts":"23.11.2015 23:43","rt":0,"d":"Stavset"},{"l":"94","t":"24.11.2015 05:13","ts":"24.11.2015 05:13","rt":0,"d":"Lade"},{"l":"8","t":"24.11.2015 05:58","ts":"24.11.2015 05:58","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 06:18","ts":"24.11.2015 06:18","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 06:38","ts":"24.11.2015 06:38","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 06:48","ts":"24.11.2015 06:48","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 06:58","ts":"24.11.2015 06:58","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 07:08","ts":"24.11.2015 07:08","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 07:18","ts":"24.11.2015 07:18","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 07:28","ts":"24.11.2015 07:28","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 07:38","ts":"24.11.2015 07:38","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 07:38","ts":"24.11.2015 07:38","rt":0,"d":"Sentrum"},{"l":"8","t":"24.11.2015 07:48","ts":"24.11.2015 07:48","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 07:48","ts":"24.11.2015 07:48","rt":0,"d":"Sentrum"},{"l":"8","t":"24.11.2015 07:58","ts":"24.11.2015 07:58","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 08:08","ts":"24.11.2015 08:08","rt":0,"d":"Stavset"}]});
 let tidspunkt = immstruct({
   "tid": "",
-  "nesteBussOmSekunder": -1
+  "antallSekunderTilForsteBussavgang": -1,
+  "antallSekunderTilAndreBussavgang": -1
 })
 
 let el = document.querySelector('#app');
+
+if (DEBUG) {
+  document.body.classList.add("debug");
+}
 
 let render = () =>
   ReactDOM.render(
@@ -24,7 +30,8 @@ let render = () =>
       avganger: rutetider.cursor('avganger'),
       sistOppdatert: rutetider.cursor('sistOppdatert'),
       tid: tidspunkt.cursor('tid'),
-      nesteBussOmSekunder: tidspunkt.cursor('nesteBussOmSekunder')
+      antallSekunderTilForsteBussavgang: tidspunkt.cursor('antallSekunderTilForsteBussavgang'),
+      antallSekunderTilAndreBussavgang: tidspunkt.cursor('antallSekunderTilAndreBussavgang')
     }), el);
 
 render();
@@ -52,21 +59,47 @@ var oppdaterRutetider = () => {
       });
   };
 
+var antallSekunderTilNesteBussavgangNr = (avgangNr) => {
+  var avganger = rutetider.cursor('avganger').deref();
+
+  var tid = moment(avganger.get(avgangNr).get('t'), "DD.MM.YYYY HH:mm");
+  var now = moment();
+
+  return tid.diff(now, 'seconds');
+}
+
 var oppdaterTidspunkt = () => {
+  tidspunkt.cursor()
+    .set('tid', moment().format('HH:mm:ss'));
+
   var avganger = rutetider.cursor('avganger').deref();
   if (avganger.count() > 0) {
     console.log("Oppdaterer tidspunkt");
-    var tid = moment(avganger.get(0).get('t'), "DD.MM.YYYY HH:mm");
-    var now = moment();
+
+    var antallSekunderTilForsteBussavgang = antallSekunderTilNesteBussavgangNr(0);
+
     tidspunkt.cursor()
-        .set('nesteBussOmSekunder', tid.diff(now, 'seconds'));
+        .set('antallSekunderTilForsteBussavgang', antallSekunderTilForsteBussavgang);
+
+    if (antallSekunderTilForsteBussavgang < 130) {
+      // fjern første avgang, da det er under 2 minutter til.
+
+      rutetider.cursor().set('avganger', avganger.remove(0));
+      oppdaterTidspunkt();
+      return;
+    }
   }
 
-  tidspunkt.cursor()
-    .set('tid', moment().format('HH:mm:ss'));
+  if (avganger.count() >= 2) {
+
+    var antallSekunderTilAndreBussavgang = antallSekunderTilNesteBussavgangNr(1);
+
+    tidspunkt.cursor()
+        .set('antallSekunderTilAndreBussavgang', antallSekunderTilAndreBussavgang);
+  }
 };
 
 oppdaterTidspunkt();
-oppdaterRutetider();
+//oppdaterRutetider();
 setInterval(oppdaterTidspunkt, 1000);
-setInterval(oppdaterRutetider, 10*1000);
+//setInterval(oppdaterRutetider, 60*1000);

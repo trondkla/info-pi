@@ -4,6 +4,8 @@ var node_modules_dir = path.resolve(__dirname, 'node_modules');
 
 var config = {
   entry: [
+    // Set up an ES6-ish environment
+    'babel-polyfill',
     './js/index'
   ],
   output: {
@@ -11,6 +13,7 @@ var config = {
     filename: '[name].entry.js'
   },
   plugins: [
+    new webpack.DefinePlugin({ DEBUG: false }),
     new webpack.NoErrorsPlugin()
   ],
   module: {

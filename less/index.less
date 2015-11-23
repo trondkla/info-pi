@@ -1,4 +1,5 @@
 @import './includes';
+@import './dev';
 
 @font-face {
     font-family: "HelveticaNeue-UltraLight";
@@ -26,11 +27,20 @@ h1 {
 }
 
 .neste-avgang {
-	padding: 0.5em 0em;
-	h1 {
-		display: inline-block;
-		margin: 0;
+	.neste-avgang-tid {
 
+		
+	}
+
+	.neste-avgang-buss {
+
+	}
+
+	.neste-avgang-tid,
+	.neste-avgang-buss {
+		display: inline-block;
+
+		margin: 0;
 		i {
 			padding: 0.2em;
 		}
@@ -38,9 +48,9 @@ h1 {
 }
 
 .app {
+	padding: 0em;
 	width: 480px;
 	height: 320px;
-	padding: 0em;
 	overflow: hidden;
 
 	.laster {
@@ -50,6 +60,7 @@ h1 {
 }
 
 .klokke {
-	font-size: 1.5em
+	font-size: 0.8em;
+	display: inline-block;
 }
 

@@ -12,6 +12,7 @@ module.exports = {
     publicPath: '/build'
   },
   plugins: [
+    new webpack.DefinePlugin({ DEBUG: true }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin()
   ],

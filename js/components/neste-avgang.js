@@ -3,14 +3,14 @@ import {DOM} from 'react';
 let {h1, i, div} = DOM;
 
 var NesteAvgangTid = component('NesteAvgangTid',
-  ({avganger, nesteBussOmSekunder}) => {
-    if (nesteBussOmSekunder == -1) {
+  ({avganger, antallSekunderTilBussavgang}) => {
+    if (antallSekunderTilBussavgang == -1) {
       return (i({className: 'fa fa-refresh fa-spin'}, ''))
     }
 
-    var minutesLeft = Math.floor(nesteBussOmSekunder / 60);
+    var minutesLeft = Math.floor(antallSekunderTilBussavgang / 60);
     if (minutesLeft < 10) minutesLeft = "0" + minutesLeft;
-    var secondsLeft = nesteBussOmSekunder % 60;
+    var secondsLeft = antallSekunderTilBussavgang % 60;
     if (secondsLeft < 10) secondsLeft = "0" + secondsLeft;
     return (
       h1({ className: 'neste-avgang-tid', key: 'neste-avgang-tid' },
@@ -28,14 +28,14 @@ var NesteAvgangBuss = component('NesteAvgangBuss',
     ));
 
 export default component('NesteAvgang',
-  ({avganger, nesteBussOmSekunder}) => {
-    if (nesteBussOmSekunder == -1) {
+  ({avganger, antallSekunderTilBussavgang, cssClassNames}) => {
+    if (antallSekunderTilBussavgang == -1) {
       return (i({className: 'fa fa-refresh fa-spin laster'}, ''))
     }
     return (
-      div({ className: 'neste-avgang', key: 'neste-avgang' },
+      div({ className: 'neste-avgang ' + cssClassNames, key: 'neste-avgang' },
         NesteAvgangBuss({avganger}),
-        NesteAvgangTid({avganger, nesteBussOmSekunder}))
+        NesteAvgangTid({avganger, antallSekunderTilBussavgang}))
     )
   }
 );
