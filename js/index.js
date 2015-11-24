@@ -16,7 +16,7 @@ let tidspunkt = immstruct({
   "antallSekunderTilForsteBussavgang": -1,
   "antallSekunderTilAndreBussavgang": -1
 })
-
+let vaer = immstruct({"sted": "InitRisvollan", "varsel":[]});
 let el = document.querySelector('#app');
 
 if (DEBUG) {
@@ -30,13 +30,31 @@ let render = () =>
       sistOppdatert: rutetider.cursor('sistOppdatert'),
       tid: tidspunkt.cursor('tid'),
       antallSekunderTilForsteBussavgang: tidspunkt.cursor('antallSekunderTilForsteBussavgang'),
-      antallSekunderTilAndreBussavgang: tidspunkt.cursor('antallSekunderTilAndreBussavgang')
+      antallSekunderTilAndreBussavgang: tidspunkt.cursor('antallSekunderTilAndreBussavgang'),
+      sted: vaer.cursor('sted')
     }), el);
 
 render();
 rutetider.on('swap', render);
 tidspunkt.on('swap', render);
+vaer.on('swap', render);
 
+var oppdaterVaer = () => {
+  ajax("http://filmhylla.com/xml.php?l=http%3A%2F%2Fwww.yr.no%2Fsted%2FNorge%2FS%C3%B8r-Tr%C3%B8ndelag%2FTrondheim%2FRisvollan%2Fvarsel.xml")
+  .get()
+  .then((data) => {
+        let json = JSON.parse(data);
+        console.log(1, 'success', JSON.parse(data));
+
+        //json.name = json.name.split("(")[0].trim();
+
+        vaer.cursor()
+          .set('sted', json.location.name);
+          //.set('varsel', Immutable.fromJS(json.forecast.tabular.next));
+      }, (data) => {
+         console.log(2, 'error', JSON.parse(data));
+      });
+};
 
 var oppdaterRutetider = () => {
   ajax("http://tvguidn.com/buss.php")
@@ -98,7 +116,9 @@ var oppdaterTidspunkt = () => {
   }
 };
 
+oppdaterVaer();
 oppdaterTidspunkt();
 oppdaterRutetider();
 setInterval(oppdaterTidspunkt, 1000);
 setInterval(oppdaterRutetider, 60*1000);
+//setInterval(oppdaterVaer, 60*1000);
