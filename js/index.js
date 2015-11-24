@@ -10,8 +10,7 @@ import App from './app';
 import '../less/index.less';
 import 'font-awesome-webpack';
 
-//let rutetider = immstruct({"navn":"Asbj. Øverås v.","lat":"10.4245","lon":"63.39527","avganger":[]});
-let rutetider = immstruct({"navn":"Asbj. Øverås v.","lat":"10.4245","lon":"63.39527","avganger":[{"l":"8","t":"23.11.2015 21:43","ts":"23.11.2015 21:43","rt":1,"d":"Stavset"},{"l":"8","t":"23.11.2015 22:12","ts":"23.11.2015 22:13","rt":1,"d":"Stavset"},{"l":"8","t":"23.11.2015 22:43","ts":"23.11.2015 22:43","rt":0,"d":"Stavset"},{"l":"8","t":"23.11.2015 23:13","ts":"23.11.2015 23:13","rt":0,"d":"Stavset"},{"l":"8","t":"23.11.2015 23:43","ts":"23.11.2015 23:43","rt":0,"d":"Stavset"},{"l":"94","t":"24.11.2015 05:13","ts":"24.11.2015 05:13","rt":0,"d":"Lade"},{"l":"8","t":"24.11.2015 05:58","ts":"24.11.2015 05:58","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 06:18","ts":"24.11.2015 06:18","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 06:38","ts":"24.11.2015 06:38","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 06:48","ts":"24.11.2015 06:48","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 06:58","ts":"24.11.2015 06:58","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 07:08","ts":"24.11.2015 07:08","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 07:18","ts":"24.11.2015 07:18","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 07:28","ts":"24.11.2015 07:28","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 07:38","ts":"24.11.2015 07:38","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 07:38","ts":"24.11.2015 07:38","rt":0,"d":"Sentrum"},{"l":"8","t":"24.11.2015 07:48","ts":"24.11.2015 07:48","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 07:48","ts":"24.11.2015 07:48","rt":0,"d":"Sentrum"},{"l":"8","t":"24.11.2015 07:58","ts":"24.11.2015 07:58","rt":0,"d":"Stavset"},{"l":"8","t":"24.11.2015 08:08","ts":"24.11.2015 08:08","rt":0,"d":"Stavset"}]});
+let rutetider = immstruct({"navn":"Asbj. Øverås v.","lat":"10.4245","lon":"63.39527","avganger":[]});
 let tidspunkt = immstruct({
   "tid": "",
   "antallSekunderTilForsteBussavgang": -1,
@@ -100,6 +99,6 @@ var oppdaterTidspunkt = () => {
 };
 
 oppdaterTidspunkt();
-//oppdaterRutetider();
+oppdaterRutetider();
 setInterval(oppdaterTidspunkt, 1000);
-//setInterval(oppdaterRutetider, 60*1000);
+setInterval(oppdaterRutetider, 60*1000);
