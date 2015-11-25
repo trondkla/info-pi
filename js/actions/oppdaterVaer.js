@@ -5,6 +5,7 @@ import moment from 'moment';
 var ekstrakterInteressantData = function(varsel) {
 	return {
 		symbol: varsel.symbol['@attributes'].number,
+		symbolName: varsel.symbol['@attributes'].name,
 		periode: varsel['@attributes'].period,
 		temperatur: varsel.temperature['@attributes'].value,
 		nedborsmengde: varsel.precipitation['@attributes'],
