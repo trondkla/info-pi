@@ -2,13 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import component from 'omniscient';
 import immstruct from 'immstruct';
-import Immutable from 'immutable';
-import ajax from './ajax';
-import moment from 'moment';
 
 import App from './app';
 import '../less/index.less';
 import 'font-awesome-webpack';
+
+import oppdaterTidspunkt from './actions/oppdaterTidspunkt';
+import oppdaterRutetider from './actions/oppdaterRutetider';
+import oppdaterAvganger from './actions/oppdaterAvganger';
+import oppdaterVaer from './actions/oppdaterVaer';
 
 let rutetider = immstruct({"navn":"Asbj. Øverås v.","lat":"10.4245","lon":"63.39527","avganger":[]});
 let tidspunkt = immstruct({
@@ -16,7 +18,7 @@ let tidspunkt = immstruct({
   "antallSekunderTilForsteBussavgang": -1,
   "antallSekunderTilAndreBussavgang": -1
 })
-
+let vaer = immstruct({"sted": "InitRisvollan", "varsel":[]});
 let el = document.querySelector('#app');
 
 if (DEBUG) {
@@ -30,75 +32,26 @@ let render = () =>
       sistOppdatert: rutetider.cursor('sistOppdatert'),
       tid: tidspunkt.cursor('tid'),
       antallSekunderTilForsteBussavgang: tidspunkt.cursor('antallSekunderTilForsteBussavgang'),
-      antallSekunderTilAndreBussavgang: tidspunkt.cursor('antallSekunderTilAndreBussavgang')
+      antallSekunderTilAndreBussavgang: tidspunkt.cursor('antallSekunderTilAndreBussavgang'),
+      vaer: vaer.cursor()
     }), el);
 
 render();
 rutetider.on('swap', render);
 tidspunkt.on('swap', render);
+vaer.on('swap', render);
 
+var hvertSekund = 1000;
+var hvertMinutt = 60000;
+var hvertKvarter = 15*hvertMinutt;
 
-var oppdaterRutetider = () => {
-  ajax("http://tvguidn.com/buss.php")
-      .get()
-      .then((data) => {
-        let json = JSON.parse(data);
-        console.log(1, 'success', JSON.parse(data));
+oppdaterVaer(vaer);
+oppdaterTidspunkt(tidspunkt);
+oppdaterRutetider({rutetider: rutetider, tidspunkt: tidspunkt});
+oppdaterAvganger(rutetider);
 
-        json.name = json.name.split("(")[0].trim();
+setInterval(oppdaterTidspunkt, hvertSekund, tidspunkt);
+setInterval(oppdaterRutetider, hvertSekund, {rutetider: rutetider, tidspunkt: tidspunkt});
+setInterval(oppdaterAvganger, hvertMinutt, rutetider);
+setInterval(oppdaterVaer, hvertKvarter, vaer);
 
-        rutetider.cursor()
-          .set('navn', json.name)
-          .set('lat', json.lat)
-          .set('lon', json.lon)
-          .set('avganger', Immutable.fromJS(json.next))
-          .set('sistOppdatert', moment().format());
-      }, (data) => {
-         console.log(2, 'error', JSON.parse(data));
-      });
-  };
-
-var antallSekunderTilNesteBussavgangNr = (avgangNr) => {
-  var avganger = rutetider.cursor('avganger').deref();
-
-  var tid = moment(avganger.get(avgangNr).get('t'), "DD.MM.YYYY HH:mm");
-  var now = moment();
-
-  return tid.diff(now, 'seconds');
-}
-
-var oppdaterTidspunkt = () => {
-  tidspunkt.cursor()
-    .set('tid', moment().format('HH:mm:ss'));
-
-  var avganger = rutetider.cursor('avganger').deref();
-  if (avganger.count() > 0) {
-    console.log("Oppdaterer tidspunkt");
-
-    var antallSekunderTilForsteBussavgang = antallSekunderTilNesteBussavgangNr(0);
-
-    tidspunkt.cursor()
-        .set('antallSekunderTilForsteBussavgang', antallSekunderTilForsteBussavgang);
-
-    if (antallSekunderTilForsteBussavgang < 130) {
-      // fjern første avgang, da det er under 2 minutter til.
-
-      rutetider.cursor().set('avganger', avganger.remove(0));
-      oppdaterTidspunkt();
-      return;
-    }
-  }
-
-  if (avganger.count() >= 2) {
-
-    var antallSekunderTilAndreBussavgang = antallSekunderTilNesteBussavgangNr(1);
-
-    tidspunkt.cursor()
-        .set('antallSekunderTilAndreBussavgang', antallSekunderTilAndreBussavgang);
-  }
-};
-
-oppdaterTidspunkt();
-oppdaterRutetider();
-setInterval(oppdaterTidspunkt, 1000);
-setInterval(oppdaterRutetider, 60*1000);
