@@ -20,7 +20,7 @@ let tidspunkt = immstruct({
   "antallSekunderTilAndreBussavgang": -1
 })
 let vaer = immstruct({"sted": "InitRisvollan", "varsel":[]});
-let kalender = immstruct({"nesteDato": "", "nesteHendelse": ""});
+let kalender = immstruct({"startDato": "(00 Mån)", "lengdeTil": "om 1 måned", "hendelse": "Bursdag"});
 let el = document.querySelector('#app');
 
 if (DEBUG) {
@@ -43,6 +43,7 @@ render();
 rutetider.on('swap', render);
 tidspunkt.on('swap', render);
 vaer.on('swap', render);
+kalender.on('swap', render);
 
 var hvertSekund = 1000;
 var hvertMinutt = 60000;
@@ -59,5 +60,5 @@ setInterval(oppdaterTidspunkt, hvertSekund, tidspunkt);
 setInterval(oppdaterRutetider, hvertSekund, {rutetider: rutetider, tidspunkt: tidspunkt});
 setInterval(oppdaterAvganger, hvertMinutt, rutetider);
 setInterval(oppdaterVaer, hvertKvarter, vaer);
-setInterval(oppdaterKalender, hverDag, kalender);
+setInterval(oppdaterKalender, hvertMinutt, kalender);
 
