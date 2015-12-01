@@ -10,12 +10,10 @@ var NesteAvgangTid = component('NesteAvgangTid',
 
     var minutesLeft = Math.floor(antallSekunderTilBussavgang / 60);
     if (minutesLeft < 10) minutesLeft = "0" + minutesLeft;
-    var secondsLeft = antallSekunderTilBussavgang % 60;
-    if (secondsLeft < 10) secondsLeft = "0" + secondsLeft;
     return (
       h1({ className: 'neste-avgang-tid', key: 'neste-avgang-tid' },
         i({ className: 'fa fa-clock-o'}, ''),
-          minutesLeft + ":" + secondsLeft)
+          minutesLeft + " min")
     )
   }
 );
