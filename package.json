@@ -35,7 +35,7 @@
   },
   "scripts": {
     "start": "node hot-reload-server.js",
-    "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js"
+    "deploy": "sh deploy.sh"
   },
   "repository": {
     "type": "git",
