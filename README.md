@@ -14,3 +14,7 @@ Info pi is a info display we ([@trondkla](http://github.com/trondkla), [@elisaso
 - Webpack
 - [lots of shell scripts](http://github.com/trondkla/info-pi-client)
 
+## APIs
+- Bus api is AtB (Bus in Trondheim, Norway)
+- Weather is from yr.no (Norwegian Meteorological Institute ++)
+- Calendar will be through Google Calendar
