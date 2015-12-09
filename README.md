@@ -1,5 +1,5 @@
 # info-pi
-Info pi is a info display we ([@trondkla]](http://github.com/trondkla), [@elisasol]](http://github.com/elisasol)) have in our hallway, that displays bus, weather and calender info.
+Info pi is a info display we ([@trondkla](http://github.com/trondkla), [@elisasol](http://github.com/elisasol)) have in our hallway, that displays bus, weather and calender info.
 
 ![Screenshot](/images/screenshot-december2015.png?raw=true "Screenshot!")
 
