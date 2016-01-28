@@ -10,34 +10,33 @@ var antallDagerTil = (dato) => {
 	return moment(dato, "YYYY-MM-DD").locale('nb').fromNow();
 }
 
-//dato er på format 
+//dato er på format
 var forkortDato = (dato) => {
 	return moment(dato, "YYYYMMDD").locale('nb').format("DD MMM");
 }
 
+var onSuccess = (data) => {
+	let parsed = Ical.parse(data);
+	console.log('Hentet kalender', parsed);
+
+	let comp = new Ical.Component(parsed);
+	let vevents = comp.getAllSubcomponents("vevent");
+	var vevent = comp.getFirstSubcomponent("vevent");
+
+	kalender.cursor()
+		.set('startDato', '(' + forkortDato(vevent.getFirstPropertyValue("dtstart")) +')')
+		.set('lengdeTil', antallDagerTil(vevent.getFirstPropertyValue("dtstart")))
+		.set('hendelse', vevent.getFirstPropertyValue("summary"));
+};
+
+var onError = (data) => {
+	 console.log("Feil ved henting av kalender", Ical.parse(data));
+};
+
 var oppdaterKalender = (kalender) => {
 	ajax(passord.link)
   		.get()
-  		.then((data) => {
-        let parsed = Ical.parse(data);
-        console.log('Hentet kalender', parsed);
-        //
-        let comp = new Ical.Component(parsed);
-		let vevents = comp.getAllSubcomponents("vevent");
-		for (var vevent of vevents) {
-			var event = new Ical.Event(vevent);
-			console.log(event);
-		}
-        var vevent = comp.getFirstSubcomponent("vevent");
-
-        kalender.cursor()
-          .set('startDato', '(' + forkortDato(vevent.getFirstPropertyValue("dtstart")) +')')
-          .set('lengdeTil', antallDagerTil(vevent.getFirstPropertyValue("dtstart")))
-          .set('hendelse', vevent.getFirstPropertyValue("summary"));
-      }, (data) => {
-         console.log("Feil ved henting av kalender", Ical.parse(data));
-      });
-
+  		.then(onSuccess, onError);
 };
 
 export default oppdaterKalender;
