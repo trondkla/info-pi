@@ -8,7 +8,7 @@ var oppdaterAvganger = (rutetider) => {
       .then((data) => {
         let json = JSON.parse(data);
         console.log(1, 'Hentet avganger', JSON.parse(data));
-
+        //{error: "Something went wrong"}
         json.name = json.name.split("(")[0].trim();
 
         rutetider.cursor()
