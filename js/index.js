@@ -60,5 +60,5 @@ setInterval(oppdaterTidspunkt, hvertSekund, tidspunkt);
 setInterval(oppdaterRutetider, hvertSekund, {rutetider: rutetider, tidspunkt: tidspunkt});
 setInterval(oppdaterAvganger, hvertMinutt, rutetider);
 setInterval(oppdaterVaer, hvertKvarter, vaer);
-setInterval(oppdaterKalender, hvertMinutt, kalender);
+setInterval(oppdaterKalender, hverDag, kalender);
 
