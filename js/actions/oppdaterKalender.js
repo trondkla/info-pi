@@ -4,18 +4,6 @@ import moment from 'moment';
 import Ical from 'ical.js';
 import ajax from '../ajax';
 
-
-//var parsed = Ical.parse("BEGIN:VCALENDAR\nCALSCALE:GREGORIAN\nPRODID:-//Example Inc.//Example Calendar//EN\nVERSION:2.0\nBEGIN:VEVENT\nDTSTAMP:20080205T191224Z\nDTSTART:20081006\nSUMMARY:Planning meeting\nUID:4088E990AD89CB3DBB484909\nEND:VEVENT\nEND:VCALENDAR");
-
-//var comp = new Ical.Component(parsed);
-//var vevents = comp.getAllSubcomponents("vevent");
-
-
-/*for (var vevent of vevents) {
-	var event = new Ical.Event(vevent);
-	console.log(event);
-}*/
-
 var antallDagerTil = (dato) => {
 	if(moment().isSame(dato, 'day') )
 		return 'i dag';
